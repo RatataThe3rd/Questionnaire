@@ -10,14 +10,14 @@ const quizCreatorContainer = document.querySelector('.quiz-creator-container');
 const quizTitleDisplay = document.getElementById('quiz-title-display');
 const progressText = document.getElementById('progress-text');
 
-// Quiz type selecton elements
+// Quiz type selection elements
 const quizTypeSelect = document.getElementById('quiz-type');
-const onlineConfigForm = document.querySelector('.online-config');
-const customConfigForm = document.querySelector('.custom-config');
+const onlineConfig = document.querySelector('.online-config');
+const customConfig = document.getElementById('custom-config');
 
 // Custom quiz elements
 const createQuizBtn = document.getElementById('create-quiz-btn');
-const playCustomQuizBtn = document.getElementById('play-custom-btn');
+const playCustomBtn = document.getElementById('play-custom-btn');
 const savedQuizzesDiv = document.getElementById('saved-quizzes');
 const quizListDiv = document.getElementById('quiz-list');
 
@@ -41,10 +41,10 @@ let currentQuiz = { title: '', questions: [] };
 let score = 0;
 let isCustomQuiz = false;
 
-// Event listeners
+// Event Listeners
 quizTypeSelect.addEventListener('change', handleQuizTypeChange);
 createQuizBtn.addEventListener('click', showQuizCreator);
-playCustomQuizBtn.addEventListener('click', showSavedQuizzes);
+playCustomBtn.addEventListener('click', showSavedQuizzes);
 cancelCreateBtn.addEventListener('click', hideQuizCreator);
 addQuestionBtn.addEventListener('click', addQuestionToQuiz);
 quizCreatorForm.addEventListener('submit', saveCustomQuiz);
@@ -56,28 +56,28 @@ configForm.addEventListener('submit', (event) => {
     const numQuestions = document.getElementById('num-questions').value;
     const category = document.getElementById('category').value;
 
-
     isCustomQuiz = false;
     fetchQuestions(numQuestions, category);
+    hideAllContainers();
     quizContainer.classList.remove('hidden');
     quizTitleDisplay.textContent = 'Online Trivia Quiz';
 });
 
 function handleQuizTypeChange() {
-    const selectedType = quizTypeSelect.value;
-
+    const quizType = quizTypeSelect.value;
+    
     if (quizType === 'online') {
-        onlineConfigForm.classList.remove('hidden');
-        customConfigForm.classList.add('hidden');
+        onlineConfig.classList.remove('hidden');
+        customConfig.classList.add('hidden');
     } else {
         onlineConfig.classList.add('hidden');
         customConfig.classList.remove('hidden');
     }
 }
 
-function showQuizCreator() {
+function hideAllContainers() {
     configContainer.classList.add('hidden');
-    quizCreatorContainer.classList.remove('hidden');
+    quizContainer.classList.add('hidden');
     quizCreatorContainer.classList.add('hidden');
 }
 
@@ -124,8 +124,8 @@ function addQuestionToQuiz() {
     const wrongAnswer2 = wrongAnswer2Input.value.trim();
     const wrongAnswer3 = wrongAnswer3Input.value.trim();
 
-    if (!questionText || !correctAnswer || !wrongAnswer1 || !wrongAnswer2 || !wrongAnswer3) {
-        alert('Please fill in all fields to add a question.');
+    if (!questionText || !correctAnswer || !wrongAnswer1 || !wrongAnswer2 || !wrongAnswer3) { 
+        alert('Please fill in all fields for the question.');
         return;
     }
 
@@ -154,13 +154,13 @@ function updateQuestionsList() {
 
     currentQuiz.questions.forEach((question, index) => {
         const questionDiv = document.createElement('div');
-        questionDiv.ClassName = 'question-item';
-        questionDiv.innerHtml = `
-        <h4>Question ${index + 1}</h4>
-        <p><strong>Q:</strong>${question.question}</p>
-        <p class="correct-answer"><strong>Correct:<strong> ${question.correct_answer}</p>
-        <p class="wrong-answers"><strong>Wrong:</strong> ${question.incorrect_answers.join(', ')}</p>
-        <button onclick="removeQuestion(${index})">Remove Question</button>
+        questionDiv.className = 'question-item';
+        questionDiv.innerHTML = `
+            <h4>Question ${index + 1}</h4>
+            <p><strong>Q:</strong> ${question.question}</p>
+            <p class="correct-answer"><strong>Correct:</strong> ${question.correct_answer}</p>
+            <p class="wrong-answers"><strong>Wrong:</strong> ${question.incorrect_answers.join(', ')}</p>
+            <button onclick="removeQuestion(${index})">Remove Question</button>
         `;
         questionsListDiv.appendChild(questionDiv);
     });
@@ -184,32 +184,32 @@ quizTitleInput.addEventListener('input', updateSaveButtonState);
 
 function saveCustomQuiz(event) {
     event.preventDefault();
-
+    
     const title = quizTitleInput.value.trim();
     if (!title) {
-        alert('Please enter a title for your quiz.');
+        alert('Please enter a quiz title.');
         return;
     }
-    
-    if (currentQuiz.questions.length === 0) {
-        alert(`Please add at least one question.`);
-        return;
-    }
-    
-    currentQuiz.title = title;
 
+    if (currentQuiz.questions.length === 0) {
+        alert('Please add at least one question.');
+        return;
+    }
+
+    currentQuiz.title = title;
+    
     // Save to localStorage
     const savedQuizzes = getSavedQuizzes();
     const quizId = Date.now().toString();
     savedQuizzes[quizId] = {
         ...currentQuiz,
         id: quizId,
-        createAt: new Date().toLocaleDateString()
+        createdAt: new Date().toLocaleDateString()
     };
-
-    localStorage.setItem(`customQuizzes`, JSON.stringify(savedQuizzes));
-
-    alert('Quiz saved successfully!');
+    
+    localStorage.setItem('customQuizzes', JSON.stringify(savedQuizzes));
+    
+    alert(`Quiz "${title}" saved successfully!`);
     hideQuizCreator();
 }
 
@@ -221,11 +221,11 @@ function getSavedQuizzes() {
 function loadSavedQuizzes() {
     const savedQuizzes = getSavedQuizzes();
     quizListDiv.innerHTML = '';
-
+    
     const quizzes = Object.values(savedQuizzes);
-
+    
     if (quizzes.length === 0) {
-        quizListDiv.innerHTML = '<p>No saved quizzes found. Create your first Quiz!</p>';
+        quizListDiv.innerHTML = '<p>No saved quizzes found. Create your first quiz!</p>';
         return;
     }
     
@@ -233,38 +233,38 @@ function loadSavedQuizzes() {
         const quizDiv = document.createElement('div');
         quizDiv.className = 'quiz-item';
         quizDiv.innerHTML = `
-        <div>
-            <h4>${quiz.title}</h4>
-            <p>${quiz.questions.length} questions - Created: ${quiz.createdAt}</p>
-        </div>
-        <div class="quiz-item-buttons">
-            <button onclick="startCustomQuiz('${quiz.id}')">Play</button>
-            <button onclick="deleteCustomQuiz('${quiz.id}')" class="delete-btn">Delete</button>
-        </div>
+            <div>
+                <h4>${quiz.title}</h4>
+                <p>${quiz.questions.length} questions • Created: ${quiz.createdAt}</p>
+            </div>
+            <div class="quiz-item-actions">
+                <button onclick="playCustomQuiz('${quiz.id}')">Play</button>
+                <button onclick="deleteCustomQuiz('${quiz.id}')" class="delete-btn">Delete</button>
+            </div>
         `;
         quizListDiv.appendChild(quizDiv);
     });
 }
 
-function startCustomQuiz(quizId) {
+function playCustomQuiz(quizId) {
     const savedQuizzes = getSavedQuizzes();
-    const selectedQuiz = savedQuizzes[quizId];
-
+    const quiz = savedQuizzes[quizId];
+    
     if (!quiz) {
         alert('Quiz not found!');
         return;
     }
     
-    questions = selectedQuiz.questions;
+    questions = quiz.questions;
     currentQuestionIndex = 0;
     score = 0;
     isCustomQuiz = true;
-
+    
     hideAllContainers();
     quizContainer.classList.remove('hidden');
     quizTitleDisplay.textContent = quiz.title;
-
-    showquestion();
+    
+    showQuestion();
 }
 
 function deleteCustomQuiz(quizId) {
@@ -277,39 +277,39 @@ function deleteCustomQuiz(quizId) {
 }
 
 // Fetch questions from Open Trivia Database
-async function fetchQuestions(numQuestions = 10, category='') {
+async function fetchQuestions(numQuestions = 10, category = '') {
     try {
         let url = `https://opentdb.com/api.php?amount=${numQuestions}&type=multiple`;
         if (category) {
             url += `&category=${category}`;
         }
 
-        console.log('Fetching questions from URL:', url); // Debug log
+        console.log('Fetching questions from URL:', url); // Debugging log
 
-        const response = await fetch (url);
+        const response = await fetch(url);
         const data = await response.json();
 
-        console.log(`API Response:`, data); // Debug log
+        console.log('API Response:', data); // Debugging log
 
         if (!data.results || data.results.length === 0) {
-            throw new Error ('No questions returned from the API.');
+            throw new Error('No questions returned from the API');
         }
 
         questions = data.results;
         currentQuestionIndex = 0;
         showQuestion();
     } catch (error) {
-        questionElement.textContent = `Failed to load questions. Please try again later.`;
-        console.error(`Error fetching questions:`, error);
+        questionElement.textContent = 'Failed to load questions. Please try again later.';
+        console.error('Error fetching questions:', error);
     }
 }
 
 function showQuestion() {
     resetState();
-    const question = questions [currentQuestionIndex];
+    const question = questions[currentQuestionIndex];
     questionElement.textContent = isCustomQuiz ? question.question : decodeHTML(question.question);
 
-    //Update progress
+    // Update progress
     progressText.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
 
     const answers = [...question.incorrect_answers, question.correct_answer];
@@ -318,16 +318,15 @@ function showQuestion() {
     answers.forEach(answer => {
         const button = document.createElement('button');
         button.textContent = isCustomQuiz ? answer : decodeHTML(answer);
-        button.addEventListener('click', () => selectAnswer(answer, question.correct_answer));
+        button.addEventListener('click', () => selectAnswer(answer === question.correct_answer));
         answersElement.appendChild(button);
     });
 }
 
 function resetState() {
-    const button = document.createElement('button');
-    button.textContent = isCustomQuiz ? answer : decodeHTML(answer);
-    button.addEventListener('click', () => selectAnswer(answer, question.correct_answer));
-    answersElement.appendChild(button);
+    answersElement.innerHTML = '';
+    nextButton.classList.add('hidden');
+    restartButton.classList.add('hidden');
 }
 
 function selectAnswer(isCorrect) {
@@ -338,27 +337,28 @@ function selectAnswer(isCorrect) {
     Array.from(answersElement.children).forEach(button => {
         button.disabled = true;
         const buttonText = button.textContent;
-        const correctAnswerText = isCustomQuiz ?
-            questions[currentQuestionIndex].correct_answer :
+        const correctAnswerText = isCustomQuiz ? 
+            questions[currentQuestionIndex].correct_answer : 
             decodeHTML(questions[currentQuestionIndex].correct_answer);
-
+            
         if (buttonText === correctAnswerText) {
-            button.style.backgroundColor = '#28a645';
+            button.style.backgroundColor = '#28a745';
         } else {
             button.style.backgroundColor = '#dc3545';
         }
     });
+
     nextButton.classList.remove('hidden');
-    nextButton.removeEventListener('click', nextQuestion);
+    nextButton.removeEventListener('click', nextQuestion); // Remove previous listener
     nextButton.addEventListener('click', nextQuestion);
 }
 
-function showQuizResults() {
+function nextQuestion() {
     currentQuestionIndex++;
     if (currentQuestionIndex < questions.length) {
         showQuestion();
     } else {
-        showResults();
+        showQuizResults();
     }
 }
 
@@ -376,14 +376,14 @@ function showQuizResults() {
 }
 
 function getScoreMessage(percentage) {
-    if (percentage >= 90) return "Excellent! You're a trivia master!";
-    if (percentage >= 70) return "Great job! You have a solid knowledge.";
-    if (percentage >= 50) return "Good effort! A little more practice and you'll improve.";
-    return "Keep trying! Don't be discouraged, practice makes perfect.";
+    if (percentage >= 90) return "Excellent! You're a quiz master! 🏆";
+    if (percentage >= 70) return "Great job! Well done! 👏";
+    if (percentage >= 50) return "Good effort! Keep it up! 👍";
+    return "Don't give up! Practice makes perfect! 💪";
 }
 
-function hideAllContainers() {
-    for (let i = Array.length - 1; i > 0; i--) {
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
@@ -395,11 +395,11 @@ function decodeHTML(html) {
     return txt.value;
 }
 
-//Initialize the application
+// Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
-    //set default quiz type
+    // Set default quiz type
     handleQuizTypeChange();
-
-    //Don't auto-fetch questions anymore
-    //fetchQuestions();
+    
+    // Don't auto-fetch questions anymore
+    // fetchQuestions();
 });
