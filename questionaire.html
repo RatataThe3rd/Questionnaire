@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionnaire</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="config-container"
+        <h1>Quiz configuration</h1>
+
+        <div class="quiz-type-selection">
+            <label for="quiz-type-selection"></label>
+        <select id="quiz-type">
+            <option value="online">Online Quiz (Trivia Databse)</option>
+            <option value="custom">Custom Quiz (Your question)</option>
+            </select>
+    </div>
+
+        <form id="config-form" class="online-config">
+            <label for ="num-questions">Number of Questions:</label>
+            <input type="number" id="num-questions" name="num-questions" min="1" max="50" value="10">
+            <label for ="category">Select Category:</label>
+            <select id="category" name="category">
+                <option value="">Any Category</option>
+                <option value="9">General Knowledge</option>
+                <option value="10">Sports</option>
+                <option value="11">History</option>
+                <option value="12">Science & Nature</option>
+                <option value="13">Computers</option>
+                <option value="14">Mathematics</option>
+                <option value="15">Mythology</option>
+                <option value="16">Geography</option>
+                <option value="17">Art</option>
+                <option value="18">Celebrities</option>
+                <option value="19">Animals</option>
+                <option value="20">Vehicles</option>
+                <option value="21">Comics</option>
+                <option value="22">Gadgets</option>
+                <option value="23">Anime & Manga</option>
+                <option value="24">Cartoon & Animations</option>
+                <option value="25">Books</option>
+                <option value="26">Film</option>
+                <option value="27">Music</option>
+                <option value="28">Musicals & Theatres</option>
+                <option value="29">Television</option>
+                <option value="30">Video Games</option>
+                <option value="31">Board Games</option>
+                <option value="32">Science: Computers</option>
+            </select>
+            <button type ="submit">Start Quiz</button>
+            </form>
+
+    <div id="custom-config" class="custom-config hidden">
+            <div class="custom-quiz-options">
+                <button id="create-quiz-btn">Create New Quiz</button>
+                <button id="play-custom-btn" class="config-btn">Play Custom Quiz</button>
+            </div>
+
+            <div id="saved-quizzes" class="saved-quizzes hidden">
+                <h3>Saved Quizzes</h3>
+                <div id="quiz-list">
+                </div>
+            </div>
+    </div>
+
+<!-- Custom quiz creator -->
+<div class="quiz-creator-container hidden">
+    <h1>Create Your Quiz</h1>
+    <form id="quiz-creator-form">
+        <label for="quiz-title">Quiz Title:</label>
+        <input type="text" id="quiz-title" name="quiz-title" required>
+
+        <div class="add-question-form">
+            <h4> Add New Question</h4>
+            <label for="question-text">Question:</label>
+            <textarea id="question-text" name="question-text" rows="3" required></textarea>
+
+            <label for="correct-answer">Correct Answer:</label>
+            <input type="text" id="correct-answer" name="correct-answer" required>
+
+            <label for="wrong-answer-1">Wrong Answers 1:</label>
+            <input type="text" id="wrong-answer-1" name="wrong-answer-1" required>
+
+            <label for="wrong-answer-2">Wrong Answers 2:</label>
+            <input type="text" id="wrong-answer-2" name="wrong-answer-2" required>
+
+            <label for="wrong-answer-3">Wrong Answers 3:</label>
+            <input type="text" id="wrong-answer-3" name="wrong-answer-3" required>
+
+            <button type="button" id="add-question-btn">Add Question</button>
+        </div>
+    </div>
+
+    <div class="quiz-actions">
+        <button type="submit" id="save-quiz-btn">Save Quiz</button>
+        <button type="button" id="cancel-quiz-btn">Cancel</button>
+    </div>
+</form>
+
+
+    <div class="quiz-container hidden">
+        <h1 id="quiz-title-display">Interative Quiz</h1>
+        <div id="question-container">
+            <p id="question">Loading question...</p>
+            <div id="answers"></div>
+        </div>
+        <div class="quiz-progress">
+            <span id="progress-text">Question 1 of 10</span>
+        </div>
+        <button id="next-btn" class="hidden">Next</button>
+        <button id="restart-btn" class="hidden">Create Another Quiz</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+ </html>
